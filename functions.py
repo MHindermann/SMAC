@@ -1,18 +1,10 @@
+#FUNCTIONS:
+#--------------------
+
 from classes import Model
 from classes import Node
 import string
 import itertools
-
-#####################
-#NOTES:
-#####################
-
-#Convention wrt syntax: Brackets around each negation, conjunction, diamond, etc., e.g., (E&(~E)), ((~E)&E), (~(E&E)), (~((~E)&E)), (dE), (~((dW)&E)))
-#Convention wrt to naming functions: 'give_' prefix indicates that something is returned; 'build_' prefix indicates that class object is changed
-
-#####################
-#FUNCTIONS:
-#####################
 
 def give_modeltruth(model, formula, verbose): #Return truthvalue of formula in model
     for codon in model.get_domain():
@@ -65,20 +57,16 @@ def give_codontruth(model, codon, formula, verbose): #Return truthvalue of formu
         print ''
         return None
 
-#--------------------
 #MODEL:
-#--------------------
 
 def give_simplemodel(): #Return the simple model
     simplemodel = Model()
-
     #Setup domain:
     domain = set()         
     for bases in itertools.product('ACGT', repeat=3):
         codon = ''.join(bases)
         domain.add(codon)
     simplemodel.set_domain(domain)
-
     #Setup relation:
     relation = dict()       
     alphabet = ['A','C','G','T']
@@ -95,10 +83,8 @@ def give_simplemodel(): #Return the simple model
         substitutions.remove(codon)
         relation[codon] = list(substitutions)
     simplemodel.set_relation(relation)
-
     #Setup atoms:
     simplemodel.set_atoms(set(['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V', '*']))
-
     #Setup valuation:
     simplemodel.set_valuation({'A': ['GCA', 'GCC', 'GCG', 'GCT'],
                                'R': ['AGA', 'AGG', 'CGA', 'CGC', 'CGG', 'CGT'],
@@ -123,32 +109,24 @@ def give_simplemodel(): #Return the simple model
                                '*': ['TAA', 'TAG', 'TGA']})
     return simplemodel
 
-#--------------------
 #SEMANTICS:
-#--------------------
 
-def build_tree(model, root, verbose): #Update root into tree (recursive)
-    operator = give_operator(root.get_formula())
-    
+def build_tree(model, root, verbose): #Update root into tree
+    operator = give_operator(root.get_formula())  
     if operator == 'atom':
         root.set_operator(operator)
-
     if operator == 'negation':
         child = Node()
         child.set_codon(root.get_codon())
         child.set_formula(root.get_formula()[2:len(root.get_formula())-1])
         root.set_children([child])
         root.set_operator(operator)
-
     if operator == 'conjunction':
         build_children(operator, root)
-
     if operator == 'disjunction':
         build_children(operator, root)
-
     if operator == 'implication':
-        build_children(operator, root)
-    
+        build_children(operator, root)   
     if (operator == 'diamond' or operator == 'box'):
         substitutions = model.get_relation()[root.get_codon()]
         children = list()
@@ -159,16 +137,13 @@ def build_tree(model, root, verbose): #Update root into tree (recursive)
             children.append(child)
         root.set_children(children)
         root.set_operator(operator)         
-
     for child in root.get_children():
         build_tree(model, child, verbose)
-
     return root
 
-def build_evaluation(model, node, verbose): #Update node with truthvalue (recursive)
+def build_evaluation(model, node, verbose): #Update node with truthvalue
     if verbose == 1:
-        print '%s at %s (%s)' % (node.get_formula(), node.get_codon(), node.get_operator())
-        
+        print '%s at %s (%s)' % (node.get_formula(), node.get_codon(), node.get_operator())     
     if node.get_operator() == 'atom':
         if node.get_codon() in model.get_valuation()[node.get_formula()]:
             node.set_formula('1')
@@ -176,7 +151,6 @@ def build_evaluation(model, node, verbose): #Update node with truthvalue (recurs
         else:
             node.set_formula('0')
             node.set_operator('resolved')            
-
     if node.get_operator() == 'negation':
         for child in node.get_children():
             while child.get_operator() != 'resolved':
@@ -186,8 +160,7 @@ def build_evaluation(model, node, verbose): #Update node with truthvalue (recurs
                 node.set_operator('resolved')
             else:
                 node.set_formula('1')
-                node.set_operator('resolved')
-         
+                node.set_operator('resolved')  
     if (node.get_operator() == 'conjunction' or node.get_operator() == 'box'):
         counter = 0
         for child in node.get_children():
@@ -201,7 +174,6 @@ def build_evaluation(model, node, verbose): #Update node with truthvalue (recurs
         else:
             node.set_formula('0')
             node.set_operator('resolved')
-
     if (node.get_operator() == 'disjunction' or node.get_operator() == 'diamond'):
         counter = 0
         for child in node.get_children():
@@ -216,7 +188,6 @@ def build_evaluation(model, node, verbose): #Update node with truthvalue (recurs
         else:
             node.set_formula('0')
             node.set_operator('resolved')
-
     if node.get_operator() == 'implication':
         antecedentchild = node.get_children()[0]
         while antecedentchild.get_operator() != 'resolved':
@@ -234,16 +205,12 @@ def build_evaluation(model, node, verbose): #Update node with truthvalue (recurs
             else:
                 node.set_formula('0')
                 node.set_operator('resolved')
-
     if verbose == 1:
         print '%s at %s (%s)' % (node.get_formula(), node.get_codon(), node.get_operator())
         print '.'
-
     return node
    
-#--------------------
 #UTILITY:
-#--------------------
 
 def build_children(operator, node): #Update node with children for 2-ary operators
     if operator == 'conjunction':
@@ -308,6 +275,3 @@ def give_parts(symbol, formula): #Return both conjuncts of a conjuction (resp. d
         if formula[position] == symbol and counter == 1:
             return [formula[1:position], formula[position+1:len(formula)-1]]
         position += 1
-        
-
-
