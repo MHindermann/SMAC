@@ -1,6 +1,5 @@
-#####################
 #CLASSES:
-#####################
+#--------------------
 
 class Model(object):
     """ Represents a model """    
