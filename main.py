@@ -9,7 +9,6 @@ def SMAC():
     print '| Atoms: A, R, N, D, C, Q, E, G, H, I, L, K, M, F, P, S, T, W, Y, V, *' + ' ' + '|'
     print '| Examples: E, (~W), (~(E&(~E))), (d((bD)>(d((dE)v(~K)))))' + ' ' * 13 + '|'
     print '-' * 72
-    
     simplemodel = give_simplemodel()
     print 'Verbose(Y/N)'
     answer = raw_input()
