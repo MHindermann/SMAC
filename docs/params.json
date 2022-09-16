@@ -1,0 +1,6 @@
+{
+  "name": "SMAC",
+  "tagline": "Simple Model Amino acid Checker",
+  "body": "### About\r\n\r\nSMAC is a model checker for the simple model given the basic amino acid language. \r\n\r\nThe simple model is a quadruple **M** = &lt;**C**,**R**,**P**,**V**&gt; where:\r\n\r\n* **C** is the set of codons; a codon c&isin;**C** is represented as a string over {A,C,T,G} such that |c|=3.\r\n* **R** is a binary relation interpreted as substitution (point mutation).\r\n* **P** is the set of atoms interpreted as amino acids (alanine A, arginine R, etc., including termination *).\r\n* **V** is a valuation function that maps each atom to a subset of **C**.\r\n\r\nThe amino acid language **L** is used to describe simple models. The syntax of **L** is given by:\r\n\r\nX := p&isin;**P** | (~X) | (XvX) | (dX)\r\n\r\nThe semantics of **L** is defined recursively:\r\n\r\n* **M**,c |= p iff p&isin;**V**(p)\r\n* **M**,c |= (~X) iff not **M**,c |= X\r\n* **M**,c |= (XvY) iff **M**,c |= X or **M**,c |= Y\r\n* **M**,c |= (dX) iff &#8707;c'&isin;**C** such that cRc' and **M**,c' |= X\r\n\r\n**M** and **L** yield the normal modal logic **KDBC4**.\r\n\r\n### Contact\r\n\r\nmaximilian.huber AT unige.ch",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
